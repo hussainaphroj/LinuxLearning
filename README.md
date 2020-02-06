@@ -3,6 +3,7 @@
 1. [Introduction](#introduction)
 2. [Configure SFTP for Web Server](#SFTP)
 3. [Xrdp port and Clip copy issue](#XRDP)
+4. [Scanning after adding new harddisk or increasing size](#ExtendHDD)
 
 ## What is this? <a name="introduction"></a>
 I have started as a habit to document anything that I will do on Linux. It is not only help my documentation but also a reference for me and others.
@@ -57,4 +58,21 @@ fi
 `service xrdp restart`
 
 Hopefully these steps will fix the issue.
-    
+
+## Scanning after adding new harddisk or increasing size<a name="ExtendHDD"></a>
+* Adding new disk: 
+   you can run the below command to discover the newly added disk on host  
+   ``` echo "- - -" >> /sys/class/scsi_host/host_$i/scan```  
+   where $i is the host number
+   #### Example:  
+        echo "- - -" >> /sys/class/scsi_host/host0/scan   
+        echo "- - -" >> /sys/class/scsi_host/host1/scan
+        echo "- - -" >> /sys/class/scsi_host/host2/scan
+  Note: If the added disk doest show up on the host after rescan, Please readd the disk with different scsi id.
+
+* Adding more space to existing disk:
+  If the added space doesn't show up on the host then you run the following command:  
+  ``` echo 1 > /sys/class/scsi_device/0\:0\:0\:0/device/rescan ```  
+  ``` echo 1 > /sys/class/scsi_device/0\:0\:1\:0/device/rescan ```  
+
+  You can run the above command based on the disk ID. IF you added space then fist disk then run on 0:0:0:0
