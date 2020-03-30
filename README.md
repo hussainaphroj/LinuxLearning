@@ -76,3 +76,13 @@ Hopefully these steps will fix the issue.
   ``` echo 1 > /sys/class/scsi_device/0\:0\:1\:0/device/rescan ```  
 
   You can run the above command based on the disk ID. IF you added space then fist disk then run on 0:0:0:0
+
+* Extending the mounted disk without Partition:  
+You can create physical volume directly from disk without partitioning it such as:  
+```pvcreate /dev/sdd```  
+
+once you have creaed the pv then you can create VolumeGroup(VG) adn LVM.  
+
+Whenever you want to extend the disk which is used to create PV without partition, you need to run following command after increasing the size and running the disk scan.  
+```pvresize /dev/sdd```
+and Automatically it increases the VG as well that is created from this disk.
