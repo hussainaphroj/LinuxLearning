@@ -5,6 +5,7 @@
 3. [Xrdp port and Clip copy issue](#XRDP)
 4. [Scanning after adding new harddisk or increasing size](#ExtendHDD)
 5. [Performance and System Utilization Report](#Performance)
+6. [Add and remove the disk](#AddRemove)
 
 ## What is this? <a name="introduction"></a>
 I have started as a habit to document anything that I will do on Linux. It is not only help my documentation but also a reference for me and others.
@@ -120,3 +121,46 @@ Automatically it increases the VG as well that is created from this disk.
   
 * ```systate```
  
+## Add and remove the disk<a name="AddRemove"></a>
+* Adding new disk:  
+  Let say that you want to add a disk with 100GB, create a partition,create lvm with that partion and mount on /data directory.  
+  once you attached the disk to vm from Vcenter/Vcloud, the disk mayn't be visible on OS  
+  you can run the below command to discover the newly added disk on host
+   ``` echo "- - -" >> /sys/class/scsi_host/host_$i/scan```
+   where $i is the host number
+   #### Example:
+        echo "- - -" >> /sys/class/scsi_host/host0/scan
+        echo "- - -" >> /sys/class/scsi_host/host1/scan
+        echo "- - -" >> /sys/class/scsi_host/host2/scan
+  Note: If the added disk doest show up on the host after rescan, Please readd the disk with different scsi id.  
+  You can verify the disk by running `fdisk -l` command, You will see a disk such as /dev/sdb 100GB
+  * Partition the disk:  
+    The partition can be created by running `fdisk /dev/sdb` and provide following: # please note that /dev/sdb is the device name  
+    `n` (new),  
+    `p` (primary),  
+    `enter` (default first block),  
+    `enter` (default last block),  
+    `enter` (default block size),  
+    `t` (providing filetype),  
+    `enter'  (default takes the 1st partition),  
+    `8e`  (code for Linux LVM),  
+    `w` (write changes),  
+    Run `partprobe -s` to discover the newly created partioned that is #/dev/sdb1 
+    verify the partition by running `fdisk -l`  
+
+  * Create physical volume(PV)  from newly created partition  
+    `pvcreate /dev/sdb1` and verify by `pvs` 
+  * Create Volume Group(VG) 
+    `vgcreate vg_data /dev/sdb1` vg_data is the name of the volume group and verify by running `vgs`  
+  * Create Logical Volume Group(lvm)  
+    `lvmcreate -n lv_data -l+100%FREE vg_data` # This creates lv_data lvm with all 100GB space and verify by running `lvs` or `lvdisplay`  
+  *  We need to create the filesystem such xfs
+    `mkfs.xfs /dev/vg_data/lv_data`
+  * Create a directory `mkdir /data`  
+  * Add the entry in /etc/fstab file
+   `vi /etc/fstab`  
+   /dev/mapper/vg_data-data /data xfs	defaults 0 0 	 
+  * Finally mount it `mount -a`  
+  * verify using `df -hT` # you can see the /data partition with 100GB
+    
+  
