@@ -142,7 +142,7 @@ Automatically it increases the VG as well that is created from this disk.
     `enter` (default last block),  
     `enter` (default block size),  
     `t` (providing filetype),  
-    `enter'  (default takes the 1st partition),  
+    `enter`  (default takes the 1st partition),  
     `8e`  (code for Linux LVM),  
     `w` (write changes),  
     Run `partprobe -s` to discover the newly created partioned that is #/dev/sdb1 
