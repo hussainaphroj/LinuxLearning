@@ -110,7 +110,7 @@ Automatically it increases the VG as well that is created from this disk.
     number of interrupts (int) and context switches (csw)  
     ``` dstat -c ```  #CPU stats
     ``` dstat -d ``` #Disk read/write  
-   ``` dstat -m ``` #memory stats  
+* Adding new disk:   ``` dstat -m ``` #memory stats  
    ``` dstat -n ``` # network stats  
     ``` dstat -g ```# paging stats  
     ``` dstat -y ``` # system stats   
@@ -163,4 +163,60 @@ Automatically it increases the VG as well that is created from this disk.
   * Finally mount it `mount -a`  
   * verify using `df -hT` # you can see the /data partition with 100GB
     
-  
+* Removing new disk:  
+  After creating the /data partition, you have reliased that you need to devide the 100GB to /data and /home.
+  The main problem is here that /data and /home are from different volume group(vg) that vg_data and vg_root. The only solution we have to remove the partition and disk and  create 2 partition of each 50GB, creat pvs with those partion for differrent voulme group.   
+  * Please note these steps will delte your data. so please backup and careful.
+  Need to perform following steps:
+    * `unmount /data` If it fails due to device busy then you have find the process using that /data using `lsof | grep "/data"` and kill that process  
+    * Edit the fstab entry  
+      `vi /etc/fstab`
+      #/dev/mapper/vg_data-data /data xfs defaults 0 0
+    * `lvremove /dev/mapper/vg_data-data` # Remove lv_data lvm  
+    * `vgremove vg_data` # remove volume group vg_data
+    * `pvremove /dev/sdb1` # Remove physical volume(PV)  
+    * `echo "- - -" > /sys/class/scsi_host/host0/scan` # scan for change in fstab file  
+    *  We are safe now to remove the disk from Vcenter/vcloud. 
+    * `echo 1 > /sys/block/sdb/device/delete` # To Mark device is delete.  
+    * `echo "- - -" > /sys/class/scsi_host/host0/scan` # scan for the changes and makes sure that disk removed completely from Memory.  
+    *  Add the disk now from from Vcenter/vcloud and run the below command to discover the newly added disk on host.  
+      `` echo "- - -" >> /sys/class/scsi_host/host_$i/scan```
+      where $i is the host number
+      #### Example:
+        echo "- - -" >> /sys/class/scsi_host/host0/scan
+        echo "- - -" >> /sys/class/scsi_host/host1/scan
+        echo "- - -" >> /sys/class/scsi_host/host2/scan
+      Note: If the added disk doest show up on the host after rescan, Please readd the disk with different scsi id.
+      You can verify the disk by running `fdisk -l` command, You will see a disk such as /dev/sdb 100GB
+     * Partition the disk:
+     The partition can be created by running `fdisk /dev/sdb` and provide following: # please note that /dev/sdb is the device name
+      `n` (new),
+      `p` (primary),
+      `enter` (default first block),
+      `enter` (+50GB),
+      `t` (providing filetype),                                                                                                                                                   `enter`  (default takes the 1st partition),                                                                                                                                 `8e`  (code for Linux LVM),
+      `w` (write changes),
+      Run `partprobe -s` to discover the newly created partioned that is #/dev/sdb1
+      verify the partition by running `fdisk -l` and follow the steps to create pv, vg, lv , filesytem and mount as given the steps in adding hardisk section.  
+      Now we have to create another partion such as /dev/sb2 for extending the /home partion by 50GB.  
+      * Partition the disk:
+     The partition can be created by running `fdisk /dev/sdb` and provide following: # please note that /dev/sdb is the device name
+      `n` (new),
+      `p` (primary),
+      `enter` (default first block),
+      `enter` (defalut last sector),
+      `t` (providing filetype),                                                                                                                                                   `enter`  (default takes the 1st partition),                                                                                                                                 `8e`  (code for Linux LVM),
+      `w` (write changes),  
+      Run `partprobe -s` to discover the newly created partioned that is #/dev/sdb2
+      * Extend the /home partition 
+        Let assume that the /home partition has created using vg_root volume group and lv_home logical volume  
+        
+       * Create physical volume(PV)  from newly created partition /dev/sdb2  
+         `pvcreate /dev/sdb2` and verify by `pvs`  
+      * Extend vg_data volume group
+        `vgextedn vg_data /dev/sdb2` vg_data is the name of the volume group and verify by running `vgs`. You will see 50GB free  
+     * Extend vg_root Logical Volume Group(lvm)
+       `lvextend -l+100%FREE /dev/mapper/vg_data-lv_root`  
+     *  Grow the xfs filesystem  
+       `xfs_growfs /dev/mapper/vg_data-lv_root` 
+     * verify by running `df -hT`                     
