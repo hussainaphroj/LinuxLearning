@@ -6,6 +6,7 @@
 4. [Scanning after adding new harddisk or increasing size](#ExtendHDD)
 5. [Performance and System Utilization Report](#Performance)
 6. [Add and remove the disk](#AddRemove)
+7. [Fix the sudoers syntax error with root password](#SudoNonroot)
 
 ## What is this? <a name="introduction"></a>
 I have started as a habit to document anything that I will do on Linux. It is not only help my documentation but also a reference for me and others.
@@ -224,3 +225,6 @@ Automatically it increases the VG as well that is created from this disk.
      *  Grow the xfs filesystem  
        `xfs_growfs /dev/mapper/vg_data-lv_root` 
      * verify by running `df -hT`  
+    
+    ## SudoFix<a name="SudoNonroot"></a>
+      * Edit the /etc/sudoers file suing `pkexec visudo` it will prompt for which user you want to authenticate with.
