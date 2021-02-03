@@ -225,8 +225,8 @@ Automatically it increases the VG as well that is created from this disk.
        `lvextend -l+100%FREE /dev/mapper/vg_data-lv_root`  
      *  Grow the xfs filesystem  
        `xfs_growfs /dev/mapper/vg_data-lv_root` 
-     * Extend the ext4 filesystem
-     `resiz2fs /dev/mapper/vg_data-lv_root`
+     * Extend the ext4 filesystem  
+     `resize2fs /dev/mapper/vg_data-lv_root`
      * verify by running `df -hT`  
     
     ## SudoFix<a name="SudoNonroot"></a>
