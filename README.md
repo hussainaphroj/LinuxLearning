@@ -6,7 +6,7 @@
 4. [Scanning after adding new harddisk or increasing size](#ExtendHDD)
 5. [Performance and System Utilization Report](#Performance)
 6. [Add and remove the disk](#AddRemove)
-7. [Fix the sudoers syntax error with root password](#SudoNonroot)
+7. [Fix the sudoers syntax error without root password](#SudoNonroot)
 8. [Remove floppy disk](#rmfloppy)
 
 ## What is this? <a name="introduction"></a>
