@@ -8,6 +8,7 @@
 6. [Add and remove the disk](#AddRemove)
 7. [Fix the sudoers syntax error without root password](#SudoNonroot)
 8. [Remove floppy disk](#rmfloppy)
+9. [Assigning ip address](#IPAssigning)
 
 ## What is this? <a name="introduction"></a>
 I have started as a habit to document anything that I will do on Linux. It is not only help my documentation but also a reference for me and others.
@@ -236,3 +237,20 @@ Automatically it increases the VG as well that is created from this disk.
       * `rmmod floppy`
       * `echo "blacklist floppy" | tee /etc/modprobe.d/floppy-blacklist.conf`
       * `update-initramfs -u`
+   
+   ## Assigning ip address<a name="IPAssigning"></a>
+     We can assign the IP addresses using the nmcli command  
+     *`nmcli con show` # It lists the connection(ethernet interfaces)  
+     * `nmcli con add con-name eth1 type ethernet ifname eth1` # add new connection of type ethernet  
+     * `nmcli con mod eth1 ipv4.addresses 192.168.10.100/24` # Assign the ip address to the newly interface  
+     * `nmcli con mod eth1 ipv4.method manual`  
+     * `nmcli con mod enp0s3 ipv4.gateway 192.168.1.1`  
+     * `nmcli con mod enp0s3 ipv4.dns "8.8.8.8"`  
+     * `nmcli con up eth1`  
+     * `nmcli con mod eth1 ipv6.addresses fbbd:fe2a:able::c0a8:64` # Ipv6  
+     * `nmcli con mod eth1 ipv6.method manual`  
+     * `nmcli con up eth1`  
+     * `ip add add 192.168.10.100/24 dev ens160` # Using IP command  
+     * `ip link set dev ens160 up` # activate the interface  
+     * `ip route add default via 192.168.1.1dev ens160` # add default route  
+     
