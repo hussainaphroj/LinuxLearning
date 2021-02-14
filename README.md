@@ -9,6 +9,7 @@
 7. [Fix the sudoers syntax error without root password](#SudoNonroot)
 8. [Remove floppy disk](#rmfloppy)
 9. [Assigning ip address](#IPAssigning)
+10.[Reset the root password on centos7] (#RootCentos7)
 
 ## What is this? <a name="introduction"></a>
 I have started as a habit to document anything that I will do on Linux. It is not only help my documentation but also a reference for me and others.
@@ -253,4 +254,18 @@ Automatically it increases the VG as well that is created from this disk.
      * `ip add add 192.168.10.100/24 dev ens160` # Using IP command  
      * `ip link set dev ens160 up` # activate the interface  
      * `ip route add default via 192.168.1.1dev ens160` # add default route  
+     
+   ## Reset the root password on centos7<a name="RootCentos7"></a>
+     * select the rescue mode  
+     * press "e"  
+     * find the kernel line (starts with "linux16")  
+     * change ro to rw and add init=/sysroot/bin/sh  
+     * press ctrl+x  
+     * `chroot /sysroot/ ` 
+     * `passwd root`  
+     * `touch /.autorelabel`  
+     * `exit`  
+     * `rebooot`  
+     
+     
      
