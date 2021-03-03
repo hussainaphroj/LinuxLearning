@@ -270,7 +270,7 @@ Automatically it increases the VG as well that is created from this disk.
     
     ## Generate CSR using openssl<a name="csropenssl"></a>  
        # Genrate csr using below command:  
-         * `openssl req -new -newkey rsa:2048 -nodes -keyout example.com.key -out exmaple.com.csr`  
+         * openssl req -new -newkey rsa:2048 -nodes -keyout example.com.key -out exmaple.com.csr  
         # Please replace #example.com with your domain name and provide following details 
         Country Name (2 letter code) [AU]:AE  
         State or Province Name (full name) [Some-State]:Dubai  
@@ -281,7 +281,7 @@ Automatically it increases the VG as well that is created from this disk.
         Email Address []:abc@example.com  
         
         # Verify the newly generated CSR using below command  
-           * `openssl req -text -noout -verify -in example.csr`  
+           * openssl req -text -noout -verify -in example.csr    
       
 
      
