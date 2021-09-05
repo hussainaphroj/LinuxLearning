@@ -245,7 +245,7 @@ Automatically it increases the VG as well that is created from this disk.
      *`nmcli con show` # It lists the connection(ethernet interfaces)  
      * `nmcli con add con-name eth1 type ethernet ifname eth1` # add new connection of type ethernet  
      * `nmcli con mod eth1 ipv4.addresses 192.168.10.100/24` # Assign the ip address to the newly interface  
-     * `nmcli con mod eth1 ipv4.method manual`  
+     * `nmcli con mod eth1 ipv4.method manual autoconnect yes` # making change permanent  
      * `nmcli con mod enp0s3 ipv4.gateway 192.168.1.1`  
      * `nmcli con mod enp0s3 ipv4.dns "8.8.8.8"`  
      * `nmcli con up eth1`  
