@@ -11,6 +11,7 @@
 9. [Assigning ip address](#IPAssigning)  
 10. [Reset the root password on centos7](#RootCentos7)
 11. [Generate CSR using openssl](#csropenssl)
+12. [different ways to test a TCP port without telnet](#withoutelnet)
 
 ## What is this? <a name="introduction"></a>
 I have started as a habit to document anything that I will do on Linux. It is not only help my documentation but also a reference for me and others.
@@ -282,6 +283,28 @@ Automatically it increases the VG as well that is created from this disk.
         
         # Verify the newly generated CSR using below command  
            * openssl req -text -noout -verify -in example.csr    
+
+    ## different ways to test a TCP port without telnet<a name="withoutelnet"></a> 
+       # BASH
+         * cat < /dev/tcp/127.0.0.1/22  
+          SSH-2.0-OpenSSH_5.3  
+          ^C
+         * cat < /dev/tcp/127.0.0.1/23  
+           bash: connect: Connection refused  
+           bash: /dev/tcp/127.0.0.1/23: Connection refused   
+           
+       # cURL  
+        * curl -v telnet://127.0.0.1:22  
+          About to connect() to 127.0.0.1 port 22 (#0)  
+          Trying 127.0.0.1... connected
+          Connected to 127.0.0.1 (127.0.0.1) port 22 (#0)
+          SSH-2.0-OpenSSH_5.3
+          ^C
+        * curl -v telnet://127.0.0.1:23
+          About to connect() to 127.0.0.1 port 23 (#0)
+          Trying 127.0.0.1... Connection refused
+          couldn't connect to host
+          Closing connection #0
       
 
      
